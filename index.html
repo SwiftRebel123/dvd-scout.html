@@ -223,6 +223,9 @@ function clearSessionBtn() {
   document.getElementById('done-btn').style.display = 'none';
   document.getElementById('scan-more-btn').style.display = 'none';
   document.getElementById('results').style.display = 'none';
+  document.getElementById('status').style.display = 'none';
+  document.getElementById('upload-zone').style.display = 'block';
+  document.querySelectorAll('input[type=file]').forEach(function(el) { el.value = ''; });
 }
 
 async function loadSales() {
