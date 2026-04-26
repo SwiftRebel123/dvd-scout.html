@@ -3,63 +3,126 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>DVD Scout</title>
+<title>Shelf Scout</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f0f0f;
-    --surface: #1a1a1a;
-    --border: #2a2a2a;
-    --border-light: #333;
-    --text: #f0f0f0;
-    --text-secondary: #888;
-    --text-tertiary: #555;
-    --hot: #ff4d1c;
-    --hot-bg: #1f0a04;
-    --worth: #1dbd7e;
-    --worth-bg: #041a10;
+    --bg: #0f0f0f; --surface: #1a1a1a; --border: #2a2a2a; --border-light: #333;
+    --text: #f0f0f0; --text-secondary: #888; --text-tertiary: #555;
+    --hot: #ff4d1c; --hot-bg: #1f0a04; --worth: #1dbd7e; --worth-bg: #041a10;
+    --accent: #3b82f6;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
-  #app { max-width: 480px; margin: 0 auto; padding: 24px 16px 48px; }
-  header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-  .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-  .logo-icon { width: 26px; height: 26px; background: var(--hot); border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-  h1 { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; letter-spacing: -0.02em; }
-  .tagline { font-size: 12px; color: var(--text-secondary); font-family: 'DM Mono', monospace; }
-  #upload-zone { border: 1.5px dashed var(--border-light); border-radius: 12px; padding: 28px 16px; text-align: center; background: var(--surface); margin-bottom: 12px; }
-  .upload-title { font-size: 14px; font-weight: 600; color: var(--text); display: block; margin-bottom: 16px; }
-  .upload-btns { display: flex; gap: 10px; justify-content: center; }
-  .upload-btn { flex: 1; max-width: 160px; padding: 11px 12px; border-radius: 8px; border: 1px solid var(--border-light); background: var(--bg); color: var(--text-secondary); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; position: relative; }
+  #app { max-width: 480px; margin: 0 auto; padding: 20px 14px 60px; }
+
+  /* Header */
+  header { margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+  .logo { display: flex; align-items: center; gap: 9px; margin-bottom: 3px; }
+  .logo-icon { width: 26px; height: 26px; background: var(--hot); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  h1 { font-family: 'DM Mono', monospace; font-size: 17px; font-weight: 500; }
+  .tagline { font-size: 11px; color: var(--text-secondary); font-family: 'DM Mono', monospace; }
+
+  /* Category toggle */
+  .cat-toggle { display: flex; gap: 8px; margin-bottom: 14px; }
+  .cat-btn { flex: 1; padding: 9px; border-radius: 8px; border: 1px solid var(--border-light); background: var(--surface); color: var(--text-secondary); font-size: 13px; cursor: pointer; text-align: center; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
+  .cat-btn.active { border-color: var(--hot); color: var(--text); background: var(--hot-bg); }
+
+  /* Upload */
+  #upload-zone { border: 1.5px dashed var(--border-light); border-radius: 12px; padding: 22px 14px; text-align: center; background: var(--surface); margin-bottom: 10px; }
+  .upload-title { font-size: 13px; font-weight: 600; color: var(--text); display: block; margin-bottom: 12px; }
+  .upload-btns { display: flex; gap: 8px; justify-content: center; }
+  .upload-btn { flex: 1; max-width: 150px; padding: 10px; border-radius: 8px; border: 1px solid var(--border-light); background: var(--bg); color: var(--text-secondary); font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
   .upload-btn input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-  #preview-wrap { display: none; margin-bottom: 12px; }
-  #preview-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); max-height: 240px; object-fit: cover; display: block; }
-  .retake-btns { display: flex; gap: 8px; margin-top: 8px; }
-  .retake-btn { flex: 1; padding: 8px; border-radius: 7px; border: 1px solid var(--border); background: transparent; color: var(--text-tertiary); font-size: 12px; cursor: pointer; position: relative; text-align: center; }
-  .retake-btn input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-  #analyze-btn { width: 100%; padding: 14px; border-radius: 10px; border: none; background: var(--hot); color: #fff; font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; display: none; margin-bottom: 12px; transition: opacity 0.15s; }
-  #analyze-btn:hover { opacity: 0.88; }
-  #analyze-btn:disabled { opacity: 0.4; cursor: default; }
-  #status { display: none; text-align: center; padding: 14px; font-size: 13px; color: var(--text-secondary); font-family: 'DM Mono', monospace; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); margin-bottom: 12px; }
-  .status-dot { display: inline-block; width: 6px; height: 6px; background: var(--hot); border-radius: 50%; margin-right: 8px; animation: pulse 1s infinite; }
+
+  /* Scan count */
+  #scan-count { display: none; font-size: 12px; color: var(--text-secondary); font-family: 'DM Mono', monospace; text-align: center; margin-bottom: 10px; padding: 8px; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); }
+
+  /* Buttons */
+  .btn-primary { width: 100%; padding: 13px; border-radius: 10px; border: none; background: var(--hot); color: #fff; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; margin-bottom: 10px; transition: opacity 0.15s; display: none; }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:disabled { opacity: 0.4; cursor: default; }
+  .btn-secondary { width: 100%; padding: 11px; border-radius: 8px; border: 1px solid var(--border-light); background: transparent; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; margin-bottom: 10px; font-family: 'DM Mono', monospace; display: none; }
+
+  /* Status */
+  #status { display: none; text-align: center; padding: 12px; font-size: 12px; color: var(--text-secondary); font-family: 'DM Mono', monospace; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); margin-bottom: 10px; }
+  .dot { display: inline-block; width: 5px; height: 5px; background: var(--hot); border-radius: 50%; margin-right: 7px; animation: pulse 1s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* Results */
   #results { display: none; }
-  .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .results-header h2 { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
-  #reset-btn { font-size: 12px; color: var(--text-tertiary); background: none; border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; cursor: pointer; font-family: 'DM Mono', monospace; }
-  .section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-tertiary); font-family: 'DM Mono', monospace; margin: 20px 0 8px; display: flex; align-items: center; gap: 8px; }
+  .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .results-header h2 { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+  #reset-btn { font-size: 11px; color: var(--text-tertiary); background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 9px; cursor: pointer; font-family: 'DM Mono', monospace; }
+
+  .section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-tertiary); font-family: 'DM Mono', monospace; margin: 16px 0 6px; display: flex; align-items: center; gap: 7px; }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  .count-pill { font-size: 10px; background: var(--border); color: var(--text-tertiary); padding: 1px 6px; border-radius: 10px; }
-  .title-row { display: flex; align-items: center; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); margin-bottom: 5px; gap: 8px; }
+  .count-pill { font-size: 10px; background: var(--border); color: var(--text-tertiary); padding: 1px 5px; border-radius: 8px; }
+
+  /* Title rows */
+  .title-row { border-radius: 8px; border: 1px solid var(--border); background: var(--surface); margin-bottom: 5px; overflow: hidden; }
   .title-row.hot-row { border-color: #2a1008; background: var(--hot-bg); }
-  .title-name { color: var(--text); font-size: 13px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .row-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-  .badge { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 4px; white-space: nowrap; font-family: 'DM Mono', monospace; }
+  .title-row.not-sure-row { border-color: #2a2208; background: #1a1500; }
+
+  .title-main { display: flex; align-items: center; padding: 8px 10px; gap: 7px; }
+  .title-info { flex: 1; min-width: 0; }
+  .title-name { color: var(--text); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .title-studio { color: var(--text-tertiary); font-size: 10px; font-family: 'DM Mono', monospace; display: block; margin-top: 1px; }
+  .title-sold { color: var(--worth); font-size: 10px; font-family: 'DM Mono', monospace; display: block; margin-top: 1px; }
+  .title-duplicate { color: #f59e0b; font-size: 10px; font-family: 'DM Mono', monospace; display: block; margin-top: 1px; }
+
+  .row-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+  .badge { font-size: 10px; font-weight: 500; padding: 2px 6px; border-radius: 4px; white-space: nowrap; font-family: 'DM Mono', monospace; }
   .badge-hot { background: var(--hot); color: #fff; }
   .badge-ok { color: var(--worth); border: 1px solid #0d3d28; background: var(--worth-bg); }
   .badge-skip { color: var(--text-tertiary); border: 1px solid var(--border); }
-  .ebay-link { font-size: 11px; font-weight: 500; padding: 4px 9px; border-radius: 5px; border: 1px solid var(--border-light); color: var(--text-secondary); text-decoration: none; white-space: nowrap; font-family: 'DM Mono', monospace; }
-  .copy-btn { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-light); background: transparent; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; margin-top: 20px; font-family: 'DM Mono', monospace; }
+  .badge-unsure { color: #f59e0b; border: 1px solid #3d2e08; background: #1a1500; }
+
+  .icon-btn { width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border-light); background: transparent; color: var(--text-secondary); font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .icon-btn:hover { color: var(--text); border-color: #555; }
+  .icon-btn.remove:hover { color: #ff4d4d; border-color: #ff4d4d; }
+
+  /* eBay links */
+  .title-links { display: flex; gap: 5px; padding: 0 10px 8px; flex-wrap: wrap; }
+  .ebay-link { font-size: 10px; font-weight: 500; padding: 3px 7px; border-radius: 4px; border: 1px solid var(--border-light); color: var(--text-secondary); text-decoration: none; white-space: nowrap; font-family: 'DM Mono', monospace; }
+  .ebay-link:hover { color: var(--text); }
+  .log-btn { font-size: 10px; font-weight: 500; padding: 3px 7px; border-radius: 4px; border: 1px solid #0d3d28; color: var(--worth); background: transparent; cursor: pointer; font-family: 'DM Mono', monospace; white-space: nowrap; }
+  .log-btn:hover { background: var(--worth-bg); }
+
+  /* Edit panel */
+  .edit-panel { padding: 8px 10px; border-top: 1px solid var(--border); background: #111; display: none; }
+  .edit-panel input { width: 100%; background: var(--surface); border: 1px solid var(--border-light); border-radius: 6px; padding: 7px 10px; color: var(--text); font-size: 13px; font-family: 'DM Sans', sans-serif; margin-bottom: 6px; }
+  .edit-panel input:focus { outline: none; border-color: var(--hot); }
+  .edit-cats { display: flex; gap: 5px; margin-bottom: 6px; flex-wrap: wrap; }
+  .edit-cat { padding: 4px 9px; border-radius: 5px; border: 1px solid var(--border-light); background: transparent; color: var(--text-secondary); font-size: 11px; cursor: pointer; font-family: 'DM Mono', monospace; }
+  .edit-cat:hover { color: var(--text); }
+  .edit-actions { display: flex; gap: 6px; }
+  .edit-save { flex: 1; padding: 7px; border-radius: 6px; border: none; background: var(--hot); color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .edit-cancel { padding: 7px 12px; border-radius: 6px; border: 1px solid var(--border-light); background: transparent; color: var(--text-secondary); font-size: 12px; cursor: pointer; font-family: 'DM Mono', monospace; }
+
+  /* Log sale panel */
+  .log-panel { padding: 8px 10px; border-top: 1px solid var(--border); background: #111; display: none; }
+  .log-panel input { width: 100%; background: var(--surface); border: 1px solid var(--border-light); border-radius: 6px; padding: 7px 10px; color: var(--text); font-size: 13px; font-family: 'DM Sans', sans-serif; margin-bottom: 6px; }
+  .log-panel input:focus { outline: none; border-color: var(--worth); }
+  .log-actions { display: flex; gap: 6px; }
+  .log-save { flex: 1; padding: 7px; border-radius: 6px; border: none; background: var(--worth); color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .log-cancel { padding: 7px 12px; border-radius: 6px; border: 1px solid var(--border-light); background: transparent; color: var(--text-secondary); font-size: 12px; cursor: pointer; font-family: 'DM Mono', monospace; }
+
+  /* Add title */
+  .add-title-row { display: flex; gap: 6px; margin-bottom: 5px; }
+  .add-title-row input { flex: 1; background: var(--surface); border: 1px solid var(--border-light); border-radius: 6px; padding: 7px 10px; color: var(--text); font-size: 12px; font-family: 'DM Sans', sans-serif; }
+  .add-title-row input:focus { outline: none; border-color: var(--hot); }
+  .add-title-btn { padding: 7px 12px; border-radius: 6px; border: none; background: var(--hot); color: #fff; font-size: 12px; cursor: pointer; font-family: 'DM Mono', monospace; white-space: nowrap; }
+
+  /* Bundle suggestions */
+  #bundles { margin-top: 20px; display: none; }
+  .bundle-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+  .bundle-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .bundle-items { font-size: 11px; color: var(--text-secondary); font-family: 'DM Mono', monospace; margin-bottom: 6px; }
+  .bundle-link { font-size: 10px; padding: 3px 7px; border-radius: 4px; border: 1px solid var(--border-light); color: var(--text-secondary); text-decoration: none; font-family: 'DM Mono', monospace; }
+
+  /* Copy btn */
+  .copy-btn { width: 100%; padding: 11px; border-radius: 8px; border: 1px solid var(--border-light); background: transparent; font-size: 12px; font-weight: 500; color: var(--text-secondary); cursor: pointer; margin-top: 16px; font-family: 'DM Mono', monospace; }
 </style>
 </head>
 <body>
@@ -72,13 +135,18 @@
           <circle cx="7.5" cy="7.5" r="1.5" fill="#fff"/>
         </svg>
       </div>
-      <h1>DVD Scout</h1>
+      <h1>Shelf Scout</h1>
     </div>
-    <div class="tagline">snap shelf → ranked list → eBay sold links</div>
+    <div class="tagline">snap shelves → rank → sell smarter</div>
   </header>
 
+  <div class="cat-toggle">
+    <button class="cat-btn active" onclick="setCategory('dvd')">📀 DVDs</button>
+    <button class="cat-btn" onclick="setCategory('books')">📚 Books</button>
+  </div>
+
   <div id="upload-zone">
-    <span class="upload-title">Choose a shelf photo</span>
+    <span class="upload-title" id="upload-title">Scan a shelf photo</span>
     <div class="upload-btns">
       <label class="upload-btn">
         📷 Camera
@@ -91,137 +159,413 @@
     </div>
   </div>
 
-  <div id="preview-wrap">
-    <img id="preview-img" src="" alt="shelf">
-    <div class="retake-btns">
-      <label class="retake-btn">↺ retake<input type="file" accept="image/*" capture="environment" onchange="handleFile(this.files[0])"></label>
-      <label class="retake-btn">🖼️ gallery<input type="file" accept="image/*" onchange="handleFile(this.files[0])"></label>
-    </div>
-  </div>
-
-  <button id="analyze-btn" onclick="analyze()">Scan shelf →</button>
-  <div id="status"><span class="status-dot"></span><span id="status-text">Reading titles from image...</span></div>
+  <div id="scan-count"></div>
+  <button class="btn-primary" id="done-btn" onclick="showResults()">Done — Show Results →</button>
+  <button class="btn-secondary" id="scan-more-btn" onclick="scanMore()">+ Scan another shelf</button>
+  <div id="status"><span class="dot"></span><span id="status-text">Scanning...</span></div>
 
   <div id="results">
     <div class="results-header">
       <h2>Results</h2>
-      <button id="reset-btn" onclick="reset()">↩ new scan</button>
+      <button id="reset-btn" onclick="reset()">↩ new session</button>
     </div>
     <div id="results-body"></div>
+    <div id="bundles"></div>
     <button class="copy-btn" id="copy-btn" onclick="copyList()">copy full list</button>
   </div>
 </div>
 
 <script>
-var imageBase64 = null;
-var allTitles = {};
 var SERVER = 'https://dvd-scout-server-production.up.railway.app';
+var category = 'dvd';
+var scanCount = 0;
+var accumulatedTitles = { hot: [], worth_it: [], skip: [], not_sure: [] };
+var salesHistory = [];
+var SESSION_KEY = 'shelfscout_session';
 
-function ebayUrl(title) {
-  return 'https://www.ebay.com/sch/i.html?_nkw=' + encodeURIComponent(title + ' DVD') + '&LH_Sold=1&LH_Complete=1&LH_ItemCondition=4000&_sop=15';
+// Load session from localStorage
+function loadSession() {
+  try {
+    var saved = localStorage.getItem(SESSION_KEY);
+    if (saved) {
+      var data = JSON.parse(saved);
+      accumulatedTitles = data.titles || { hot: [], worth_it: [], skip: [], not_sure: [] };
+      scanCount = data.scanCount || 0;
+      category = data.category || 'dvd';
+      if (scanCount > 0) {
+        updateScanCount();
+        document.getElementById('done-btn').style.display = 'block';
+        document.getElementById('scan-more-btn').style.display = 'block';
+      }
+    }
+  } catch(e) {}
 }
 
-function ebayActiveUrl(title) {
-  return 'https://www.ebay.com/sch/i.html?_nkw=' + encodeURIComponent(title + ' DVD') + '&LH_ItemCondition=4000&_sop=15';
+function saveSession() {
+  try {
+    localStorage.setItem(SESSION_KEY, JSON.stringify({
+      titles: accumulatedTitles,
+      scanCount: scanCount,
+      category: category
+    }));
+  } catch(e) {}
+}
+
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+}
+
+// Load sales history from server
+async function loadSales() {
+  try {
+    var resp = await fetch(SERVER + '/sales');
+    salesHistory = await resp.json();
+  } catch(e) {
+    console.log('Could not load sales history');
+  }
+}
+
+function getSalePrice(title) {
+  var t = title.toLowerCase().trim();
+  var match = salesHistory.find(function(s) {
+    return s.title.toLowerCase().trim() === t;
+  });
+  return match ? match.price : null;
+}
+
+function setCategory(cat) {
+  category = cat;
+  document.querySelectorAll('.cat-btn').forEach(function(b) { b.classList.remove('active'); });
+  event.target.classList.add('active');
+  document.getElementById('upload-title').textContent = cat === 'dvd' ? 'Scan a shelf photo' : 'Scan a bookshelf photo';
+}
+
+function updateScanCount() {
+  var el = document.getElementById('scan-count');
+  el.style.display = 'block';
+  el.textContent = scanCount + ' shelf' + (scanCount > 1 ? 's' : '') + ' scanned — ' +
+    (accumulatedTitles.hot.length + accumulatedTitles.worth_it.length + accumulatedTitles.skip.length + accumulatedTitles.not_sure.length) + ' titles found';
+}
+
+function isDuplicate(title) {
+  var t = title.toLowerCase().trim();
+  var all = accumulatedTitles.hot.concat(accumulatedTitles.worth_it, accumulatedTitles.skip, accumulatedTitles.not_sure);
+  return all.filter(function(item) { return item.title.toLowerCase().trim() === t; }).length > 1;
 }
 
 function handleFile(file) {
   if (!file) return;
   var reader = new FileReader();
   reader.onload = function(ev) {
-    imageBase64 = ev.target.result.split(',')[1];
-    document.getElementById('preview-img').src = ev.target.result;
-    document.getElementById('preview-wrap').style.display = 'block';
-    document.getElementById('upload-zone').style.display = 'none';
-    document.getElementById('analyze-btn').style.display = 'block';
-    document.getElementById('analyze-btn').disabled = false;
-    document.getElementById('analyze-btn').textContent = 'Scan shelf →';
-    document.getElementById('results').style.display = 'none';
-    document.getElementById('status').style.display = 'none';
+    var base64 = ev.target.result.split(',')[1];
+    scanShelf(base64);
   };
   reader.readAsDataURL(file);
 }
 
-async function analyze() {
-  var btn = document.getElementById('analyze-btn');
+async function scanShelf(imageBase64) {
   var status = document.getElementById('status');
-  btn.disabled = true;
-  btn.textContent = 'Scanning...';
+  var statusText = document.getElementById('status-text');
   status.style.display = 'block';
+  statusText.textContent = 'Scanning shelf ' + (scanCount + 1) + '...';
+  document.getElementById('done-btn').style.display = 'none';
+  document.getElementById('scan-more-btn').style.display = 'none';
 
   try {
     var resp = await fetch(SERVER + '/scan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageBase64: imageBase64 })
+      body: JSON.stringify({ imageBase64: imageBase64, category: category })
     });
     var data = await resp.json();
     if (data.error) throw new Error(data.error);
-    allTitles = data;
-    renderResults(data);
+
+    // Merge into accumulated titles
+    ['hot', 'worth_it', 'skip', 'not_sure'].forEach(function(key) {
+      if (data[key]) {
+        data[key].forEach(function(item) {
+          accumulatedTitles[key].push(item);
+        });
+      }
+    });
+
+    scanCount++;
+    saveSession();
+    updateScanCount();
   } catch(e) {
-    document.getElementById('status-text').textContent = 'Something went wrong. Try again.';
-    btn.disabled = false;
-    btn.textContent = 'Scan shelf →';
+    statusText.textContent = 'Something went wrong. Try again.';
+    setTimeout(function() { status.style.display = 'none'; }, 3000);
+    document.getElementById('done-btn').style.display = scanCount > 0 ? 'block' : 'none';
+    document.getElementById('scan-more-btn').style.display = scanCount > 0 ? 'block' : 'none';
     return;
   }
 
   status.style.display = 'none';
-  btn.style.display = 'none';
+  document.getElementById('done-btn').style.display = 'block';
+  document.getElementById('scan-more-btn').style.display = 'block';
 }
 
-function renderResults(data) {
+function scanMore() {
+  document.getElementById('upload-zone').style.display = 'block';
+}
+
+function ebayUrl(title, studio, sold) {
+  var q = title + (studio ? ' ' + studio : '') + (category === 'dvd' ? ' DVD' : ' book');
+  var url = 'https://www.ebay.com/sch/i.html?_nkw=' + encodeURIComponent(q) + '&LH_ItemCondition=4000&_sop=15';
+  if (sold) url += '&LH_Sold=1&LH_Complete=1';
+  return url;
+}
+
+function showResults() {
+  document.getElementById('upload-zone').style.display = 'none';
+  document.getElementById('done-btn').style.display = 'none';
+  document.getElementById('scan-more-btn').style.display = 'none';
+  document.getElementById('scan-count').style.display = 'none';
+  renderResults();
+  document.getElementById('results').style.display = 'block';
+}
+
+function renderResults() {
   var body = document.getElementById('results-body');
   body.innerHTML = '';
+
   var sections = [
     { key:'hot', label:'Pull these first', badge:'HOT', cls:'badge-hot', rowCls:'hot-row' },
     { key:'worth_it', label:'Worth grabbing', badge:'WORTH IT', cls:'badge-ok', rowCls:'' },
-    { key:'skip', label:'Leave these', badge:'SKIP', cls:'badge-skip', rowCls:'' }
+    { key:'skip', label:'Leave these', badge:'SKIP', cls:'badge-skip', rowCls:'' },
+    { key:'not_sure', label:'Not sure — verify these', badge:'?', cls:'badge-unsure', rowCls:'not-sure-row' }
   ];
+
   sections.forEach(function(sec) {
-    var titles = data[sec.key];
-    if (!titles || !titles.length) return;
+    var items = accumulatedTitles[sec.key];
+    if (!items || !items.length) return;
+
     var lbl = document.createElement('div');
     lbl.className = 'section-label';
-    lbl.innerHTML = sec.label + ' <span class="count-pill">' + titles.length + '</span>';
+    lbl.innerHTML = sec.label + ' <span class="count-pill">' + items.length + '</span>';
     body.appendChild(lbl);
-    titles.forEach(function(title) {
-      var row = document.createElement('div');
-      row.className = 'title-row ' + sec.rowCls;
-      row.innerHTML = '<span class="title-name" title="' + title.replace(/"/g,'&quot;') + '">' + title + '</span>' +
-        '<div class="row-right">' +
-        '<span class="badge ' + sec.cls + '">' + sec.badge + '</span>' +
-        '<a class="ebay-link" href="' + ebayUrl(title) + '" target="_blank">sold ↗</a>' +
-        '<a class="ebay-link" href="' + ebayActiveUrl(title) + '" target="_blank">active ↗</a>' +
-        '</div>';
-      body.appendChild(row);
+
+    items.forEach(function(item, idx) {
+      body.appendChild(makeRow(item, sec, idx));
     });
+
+    // Add title input
+    var addRow = document.createElement('div');
+    addRow.className = 'add-title-row';
+    addRow.innerHTML = '<input type="text" placeholder="+ add missed title..." id="add-' + sec.key + '">' +
+      '<button class="add-title-btn" onclick="addTitle(\'' + sec.key + '\')">Add</button>';
+    body.appendChild(addRow);
   });
-  document.getElementById('results').style.display = 'block';
+
+  renderBundles();
+}
+
+function makeRow(item, sec, idx) {
+  var title = item.title || item;
+  var studio = item.studio || '';
+  var author = item.author || '';
+  var salePrice = getSalePrice(title);
+  var dup = isDuplicate(title);
+
+  var row = document.createElement('div');
+  row.className = 'title-row ' + sec.rowCls;
+  row.id = 'row-' + sec.key + '-' + idx;
+
+  var studioLine = studio ? '<span class="title-studio">' + studio + (author ? ' · ' + author : '') + '</span>' : '';
+  var saleLine = salePrice ? '<span class="title-sold">✓ You sold for $' + salePrice + '</span>' : '';
+  var dupLine = dup ? '<span class="title-duplicate">⚠ possible duplicate</span>' : '';
+
+  row.innerHTML =
+    '<div class="title-main">' +
+      '<div class="title-info">' +
+        '<span class="title-name">' + title + '</span>' +
+        studioLine + saleLine + dupLine +
+      '</div>' +
+      '<div class="row-actions">' +
+        '<span class="badge ' + sec.cls + '">' + sec.badge + '</span>' +
+        '<button class="icon-btn" title="Edit" onclick="toggleEdit(\'' + sec.key + '\',' + idx + ')">✏️</button>' +
+        '<button class="icon-btn remove" title="Remove" onclick="removeTitle(\'' + sec.key + '\',' + idx + ')">−</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="title-links">' +
+      '<a class="ebay-link" href="' + ebayUrl(title, studio, true) + '" target="_blank">sold ↗</a>' +
+      '<a class="ebay-link" href="' + ebayUrl(title, studio, false) + '" target="_blank">active ↗</a>' +
+      '<button class="log-btn" onclick="toggleLog(\'' + sec.key + '\',' + idx + ')">log sale</button>' +
+    '</div>' +
+    '<div class="edit-panel" id="edit-' + sec.key + '-' + idx + '">' +
+      '<input type="text" id="edit-title-' + sec.key + '-' + idx + '" value="' + title.replace(/"/g,'&quot;') + '" placeholder="Title">' +
+      '<input type="text" id="edit-studio-' + sec.key + '-' + idx + '" value="' + studio.replace(/"/g,'&quot;') + '" placeholder="Studio / Publisher">' +
+      '<div class="edit-cats">' +
+        '<button class="edit-cat" onclick="saveEdit(\'' + sec.key + '\',' + idx + ',\'hot\')">HOT</button>' +
+        '<button class="edit-cat" onclick="saveEdit(\'' + sec.key + '\',' + idx + ',\'worth_it\')">WORTH IT</button>' +
+        '<button class="edit-cat" onclick="saveEdit(\'' + sec.key + '\',' + idx + ',\'skip\')">SKIP</button>' +
+        '<button class="edit-cat" onclick="saveEdit(\'' + sec.key + '\',' + idx + ',\'not_sure\')">NOT SURE</button>' +
+      '</div>' +
+      '<div class="edit-actions">' +
+        '<button class="edit-save" onclick="saveEdit(\'' + sec.key + '\',' + idx + ',\'' + sec.key + '\')">Save</button>' +
+        '<button class="edit-cancel" onclick="toggleEdit(\'' + sec.key + '\',' + idx + ')">Cancel</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="log-panel" id="log-' + sec.key + '-' + idx + '">' +
+      '<input type="number" step="0.01" id="log-price-' + sec.key + '-' + idx + '" placeholder="Sale price (e.g. 12.99)">' +
+      '<input type="text" id="log-notes-' + sec.key + '-' + idx + '" placeholder="Notes (optional)">' +
+      '<div class="log-actions">' +
+        '<button class="log-save" onclick="logSale(\'' + sec.key + '\',' + idx + ')">Save Sale</button>' +
+        '<button class="log-cancel" onclick="toggleLog(\'' + sec.key + '\',' + idx + ')">Cancel</button>' +
+      '</div>' +
+    '</div>';
+
+  return row;
+}
+
+function toggleEdit(key, idx) {
+  var panel = document.getElementById('edit-' + key + '-' + idx);
+  panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+  document.getElementById('log-' + key + '-' + idx).style.display = 'none';
+}
+
+function toggleLog(key, idx) {
+  var panel = document.getElementById('log-' + key + '-' + idx);
+  panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+  document.getElementById('edit-' + key + '-' + idx).style.display = 'none';
+}
+
+function saveEdit(fromKey, idx, toKey) {
+  var newTitle = document.getElementById('edit-title-' + fromKey + '-' + idx).value.trim();
+  var newStudio = document.getElementById('edit-studio-' + fromKey + '-' + idx).value.trim();
+  if (!newTitle) return;
+
+  var item = accumulatedTitles[fromKey][idx];
+  var updated = { title: newTitle, studio: newStudio, author: item.author || '' };
+
+  accumulatedTitles[fromKey].splice(idx, 1);
+  accumulatedTitles[toKey].push(updated);
+  saveSession();
+  renderResults();
+}
+
+function removeTitle(key, idx) {
+  accumulatedTitles[key].splice(idx, 1);
+  saveSession();
+  renderResults();
+}
+
+function addTitle(key) {
+  var input = document.getElementById('add-' + key);
+  var val = input.value.trim();
+  if (!val) return;
+  accumulatedTitles[key].push({ title: val, studio: '', author: '' });
+  input.value = '';
+  saveSession();
+  renderResults();
+}
+
+async function logSale(key, idx) {
+  var item = accumulatedTitles[key][idx];
+  var title = item.title || item;
+  var studio = item.studio || '';
+  var price = document.getElementById('log-price-' + key + '-' + idx).value;
+  var notes = document.getElementById('log-notes-' + key + '-' + idx).value;
+  if (!price) return;
+
+  try {
+    await fetch(SERVER + '/log-sale', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: title, studio: studio, category: category, price: price, notes: notes })
+    });
+    salesHistory.push({ title: title, studio: studio, category: category, price: price });
+    toggleLog(key, idx);
+    renderResults();
+  } catch(e) {
+    alert('Could not save sale. Try again.');
+  }
+}
+
+function renderBundles() {
+  var all = accumulatedTitles.hot.concat(accumulatedTitles.worth_it, accumulatedTitles.skip, accumulatedTitles.not_sure);
+  var titles = all.map(function(i) { return (i.title || i).toLowerCase(); });
+  var bundles = [];
+
+  var series = [
+    { name: 'Bourne Series', keywords: ['bourne'] },
+    { name: 'Lord of the Rings', keywords: ['fellowship', 'two towers', 'return of the king', 'lord of the rings'] },
+    { name: 'Star Wars', keywords: ['star wars', 'jedi', 'sith', 'empire strikes', 'phantom menace'] },
+    { name: 'Marvel', keywords: ['iron man', 'thor', 'avengers', 'captain america', 'hulk', 'black panther', 'spider-man'] },
+    { name: 'Harry Potter', keywords: ['harry potter', 'sorcerer\'s stone', 'chamber of secrets', 'prisoner of azkaban', 'goblet of fire'] },
+    { name: 'Fast & Furious', keywords: ['fast and furious', 'fast & furious', '2 fast', 'tokyo drift'] },
+    { name: 'Die Hard', keywords: ['die hard'] },
+    { name: 'John Wayne Collection', keywords: ['john wayne', 'mclintock', 'true grit', 'stagecoach'] },
+    { name: 'Western Lot', keywords: ['western', 'cowboy', 'outlaw', 'gunfight', 'frontier', 'ranch', 'sheriff'] },
+    { name: 'War Movies Lot', keywords: ['war', 'soldier', 'battle', 'platoon', 'saving private', 'fury', 'midway'] },
+    { name: 'Comedy Lot', keywords: ['dodgeball', 'superbad', 'blades of glory', 'anchorman', 'step brothers'] },
+  ];
+
+  series.forEach(function(s) {
+    var matches = all.filter(function(item) {
+      var t = (item.title || item).toLowerCase();
+      return s.keywords.some(function(k) { return t.includes(k); });
+    });
+    if (matches.length >= 2) {
+      bundles.push({ name: s.name, items: matches });
+    }
+  });
+
+  var bundleEl = document.getElementById('bundles');
+  if (!bundles.length) { bundleEl.style.display = 'none'; return; }
+
+  bundleEl.style.display = 'block';
+  bundleEl.innerHTML = '<div class="section-label">Bundle suggestions <span class="count-pill">' + bundles.length + '</span></div>';
+
+  bundles.forEach(function(b) {
+    var itemNames = b.items.map(function(i) { return i.title || i; }).join(', ');
+    var searchQ = b.name + (category === 'dvd' ? ' DVD lot' : ' book lot');
+    var card = document.createElement('div');
+    card.className = 'bundle-card';
+    card.innerHTML = '<div class="bundle-title">' + b.name + ' (' + b.items.length + ' titles)</div>' +
+      '<div class="bundle-items">' + itemNames + '</div>' +
+      '<a class="bundle-link" href="https://www.ebay.com/sch/i.html?_nkw=' + encodeURIComponent(searchQ) + '&LH_Sold=1&LH_Complete=1&_sop=15" target="_blank">sold lots ↗</a>';
+    bundleEl.appendChild(card);
+  });
 }
 
 function copyList() {
   var lines = [];
-  if (allTitles.hot && allTitles.hot.length) { lines.push('=== PULL FIRST ==='); allTitles.hot.forEach(function(t){lines.push(t);}); }
-  if (allTitles.worth_it && allTitles.worth_it.length) { lines.push('\n=== WORTH IT ==='); allTitles.worth_it.forEach(function(t){lines.push(t);}); }
-  if (allTitles.skip && allTitles.skip.length) { lines.push('\n=== SKIP ==='); allTitles.skip.forEach(function(t){lines.push(t);}); }
+  var sections = [
+    { key:'hot', label:'=== PULL FIRST ===' },
+    { key:'worth_it', label:'=== WORTH IT ===' },
+    { key:'skip', label:'=== SKIP ===' },
+    { key:'not_sure', label:'=== NOT SURE ===' }
+  ];
+  sections.forEach(function(sec) {
+    var items = accumulatedTitles[sec.key];
+    if (items && items.length) {
+      lines.push(sec.label);
+      items.forEach(function(i) { lines.push((i.title || i) + (i.studio ? ' (' + i.studio + ')' : '')); });
+      lines.push('');
+    }
+  });
   navigator.clipboard.writeText(lines.join('\n'));
   var btn = document.getElementById('copy-btn');
   btn.textContent = '✓ copied';
-  setTimeout(function(){ btn.textContent = 'copy full list'; }, 2000);
+  setTimeout(function() { btn.textContent = 'copy full list'; }, 2000);
 }
 
 function reset() {
-  imageBase64 = null;
-  allTitles = {};
+  accumulatedTitles = { hot: [], worth_it: [], skip: [], not_sure: [] };
+  scanCount = 0;
+  clearSession();
   document.getElementById('upload-zone').style.display = 'block';
-  document.getElementById('preview-wrap').style.display = 'none';
-  document.getElementById('analyze-btn').style.display = 'none';
-  document.getElementById('analyze-btn').disabled = false;
-  document.getElementById('analyze-btn').textContent = 'Scan shelf →';
   document.getElementById('results').style.display = 'none';
+  document.getElementById('done-btn').style.display = 'none';
+  document.getElementById('scan-more-btn').style.display = 'none';
+  document.getElementById('scan-count').style.display = 'none';
   document.getElementById('status').style.display = 'none';
 }
+
+// Init
+loadSession();
+loadSales();
 </script>
 </body>
 </html>
