@@ -118,7 +118,11 @@ var allTitles = {};
 var SERVER = 'https://dvd-scout-server-production.up.railway.app';
 
 function ebayUrl(title) {
-  return 'https://www.ebay.com/sch/i.html?_nkw=' + encodeURIComponent(title + ' DVD') + '&LH_Sold=1&LH_Complete=1&LH_ItemCondition=4000&_sop=13';
+  return 'https://www.ebay.com/sch/i.html?_nkw=' + encodeURIComponent(title + ' DVD') + '&LH_Sold=1&LH_Complete=1&LH_ItemCondition=4000&_sop=15';
+}
+
+function ebayActiveUrl(title) {
+  return 'https://www.ebay.com/sch/i.html?_nkw=' + encodeURIComponent(title + ' DVD') + '&LH_ItemCondition=4000&_sop=15';
 }
 
 function handleFile(file) {
@@ -188,6 +192,7 @@ function renderResults(data) {
         '<div class="row-right">' +
         '<span class="badge ' + sec.cls + '">' + sec.badge + '</span>' +
         '<a class="ebay-link" href="' + ebayUrl(title) + '" target="_blank">sold ↗</a>' +
+        '<a class="ebay-link" href="' + ebayActiveUrl(title) + '" target="_blank">active ↗</a>' +
         '</div>';
       body.appendChild(row);
     });
