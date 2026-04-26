@@ -160,6 +160,7 @@
   </div>
 
   <div id="scan-count"></div>
+  <button id="clear-session-btn" onclick="clearSessionBtn()" style="display:none;width:100%;padding:8px;border-radius:8px;border:1px solid var(--border-light);background:transparent;font-size:12px;color:var(--text-tertiary);cursor:pointer;margin-bottom:8px;font-family:'DM Mono',monospace;">✕ clear session</button>
   <button class="btn-primary" id="done-btn" onclick="showResults()">Done — Show Results →</button>
   <button class="btn-secondary" id="scan-more-btn" onclick="scanMore()">+ Scan another shelf</button>
   <div id="status"><span class="dot"></span><span id="status-text">Scanning...</span></div>
@@ -196,6 +197,7 @@ function loadSession() {
         updateScanCount();
         document.getElementById('done-btn').style.display = 'block';
         document.getElementById('scan-more-btn').style.display = 'block';
+        document.getElementById('clear-session-btn').style.display = 'block';
       }
     }
   } catch(e) {}
@@ -208,6 +210,17 @@ function saveSession() {
 }
 
 function clearSession() { localStorage.removeItem(SESSION_KEY); }
+
+function clearSessionBtn() {
+  clearSession();
+  accumulatedTitles = { items: [] };
+  scanCount = 0;
+  document.getElementById('scan-count').style.display = 'none';
+  document.getElementById('clear-session-btn').style.display = 'none';
+  document.getElementById('done-btn').style.display = 'none';
+  document.getElementById('scan-more-btn').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+}
 
 async function loadSales() {
   try {
@@ -294,6 +307,7 @@ async function scanShelf(imageBase64, mediaType) {
   status.style.display = 'none';
   document.getElementById('done-btn').style.display = 'block';
   document.getElementById('scan-more-btn').style.display = 'block';
+  document.getElementById('clear-session-btn').style.display = 'block';
 }
 
 function scanMore() { document.getElementById('upload-zone').style.display = 'block'; }
@@ -537,6 +551,7 @@ function reset() {
   document.getElementById('done-btn').style.display = 'none';
   document.getElementById('scan-more-btn').style.display = 'none';
   document.getElementById('scan-count').style.display = 'none';
+  document.getElementById('clear-session-btn').style.display = 'none';
   document.getElementById('status').style.display = 'none';
 }
 
