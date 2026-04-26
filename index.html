@@ -364,6 +364,7 @@ function makeRow(item, info, idx) {
         '<span class="badge ' + info.cls + '">' + info.badge + '</span>' +
         '<button class="icon-btn" title="Edit" onclick="toggleEdit(' + idx + ')">✏️</button>' +
         '<button class="icon-btn remove" title="Remove" onclick="removeTitle(' + idx + ')">−</button>' +
+        '<button class="icon-btn" title="Insert above" onclick="insertAbove(' + idx + ')" style="font-size:11px;">+↑</button>' +
       '</div>' +
     '</div>' +
     '<div class="title-links">' +
@@ -423,6 +424,14 @@ function removeTitle(idx) {
   accumulatedTitles.items.splice(idx, 1);
   saveSession();
   renderResults();
+}
+
+function insertAbove(idx) {
+  accumulatedTitles.items.splice(idx, 0, { title: '', studio: '', author: '', category: 'NOT_SURE' });
+  saveSession();
+  renderResults();
+  // Auto-open edit panel for the new blank row
+  setTimeout(function() { toggleEdit(idx); }, 50);
 }
 
 function addTitle() {
