@@ -391,6 +391,7 @@ function makeRow(item, info, idx) {
         '<button class="icon-btn" title="Edit" onclick="toggleEdit(' + idx + ')">✏️</button>' +
         '<button class="icon-btn remove" title="Remove" onclick="removeTitle(' + idx + ')">−</button>' +
         '<button class="icon-btn" title="Insert above" onclick="insertAbove(' + idx + ')" style="font-size:11px;">+↑</button>' +
+        '<button class="icon-btn" title="Split title" onclick="toggleSplit(' + idx + ')" style="font-size:11px;">✂</button>' +
       '</div>' +
     '</div>' +
     '<div class="title-links">' +
@@ -419,9 +420,53 @@ function makeRow(item, info, idx) {
         '<button style="flex:1;padding:7px;border-radius:6px;border:none;background:var(--worth);color:#fff;font-size:12px;font-weight:600;cursor:pointer;" onclick="logSale(' + idx + ')">Save Sale</button>' +
         '<button style="padding:7px 12px;border-radius:6px;border:1px solid var(--border-light);background:transparent;color:var(--text-secondary);font-size:12px;cursor:pointer;" onclick="toggleLog(' + idx + ')">Cancel</button>' +
       '</div>' +
+    '<div class="split-panel" id="split-items-' + idx + '" style="display:none;padding:8px 10px;border-top:1px solid var(--border);background:#111;">' +
+      '<div style="font-size:11px;color:var(--text-tertiary);font-family:'DM Mono',monospace;margin-bottom:6px;">Split into two titles:</div>' +
+      '<input type="text" id="split-a-items-' + idx + '" value="' + title.replace(/"/g,'&quot;') + '" placeholder="First title" style="width:100%;background:var(--surface);border:1px solid var(--border-light);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;margin-bottom:6px;">' +
+      '<input type="text" id="split-b-items-' + idx + '" value="" placeholder="Second title" style="width:100%;background:var(--surface);border:1px solid var(--border-light);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px;margin-bottom:6px;">' +
+      '<div style="display:flex;gap:6px;">' +
+        '<button style="flex:1;padding:7px;border-radius:6px;border:none;background:var(--hot);color:#fff;font-size:12px;font-weight:600;cursor:pointer;" onclick="splitTitle(' + idx + ')">Split</button>' +
+        '<button style="padding:7px 12px;border-radius:6px;border:1px solid var(--border-light);background:transparent;color:var(--text-secondary);font-size:12px;cursor:pointer;" onclick="toggleSplit(' + idx + ')">Cancel</button>' +
+      '</div>' +
     '</div>';
 
   return row;
+}
+
+function toggleSplit(idx) {
+  var panel = document.getElementById('split-items-' + idx);
+  panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+  document.getElementById('edit-items-' + idx).style.display = 'none';
+  document.getElementById('log-items-' + idx).style.display = 'none';
+  // Pre-fill split fields: try to detect common separators
+  if (panel.style.display === 'block') {
+    var item = accumulatedTitles.items[idx];
+    var title = item.title || '';
+    var separators = [' / ', ' & ', ' + ', ' | ', '/', '\\'];
+    var splitA = title, splitB = '';
+    for (var i = 0; i < separators.length; i++) {
+      if (title.includes(separators[i])) {
+        var parts = title.split(separators[i]);
+        splitA = parts[0].trim();
+        splitB = parts.slice(1).join(separators[i]).trim();
+        break;
+      }
+    }
+    document.getElementById('split-a-items-' + idx).value = splitA;
+    document.getElementById('split-b-items-' + idx).value = splitB;
+  }
+}
+
+function splitTitle(idx) {
+  var titleA = document.getElementById('split-a-items-' + idx).value.trim();
+  var titleB = document.getElementById('split-b-items-' + idx).value.trim();
+  if (!titleA || !titleB) return;
+  var item = accumulatedTitles.items[idx];
+  var itemA = { title: titleA, studio: item.studio || '', author: item.author || '', category: item.category };
+  var itemB = { title: titleB, studio: item.studio || '', author: item.author || '', category: item.category };
+  accumulatedTitles.items.splice(idx, 1, itemA, itemB);
+  saveSession();
+  renderResults();
 }
 
 function toggleEdit(idx) {
