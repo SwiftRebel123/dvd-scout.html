@@ -258,12 +258,14 @@ function handleFile(file) {
   var reader = new FileReader();
   reader.onload = function(ev) {
     var base64 = ev.target.result.split(',')[1];
-    scanShelf(base64);
+    var mediaType = file.type || 'image/jpeg';
+    scanShelf(base64, mediaType);
   };
   reader.readAsDataURL(file);
 }
 
-async function scanShelf(imageBase64) {
+async function scanShelf(imageBase64, mediaType) {
+  mediaType = mediaType || 'image/jpeg';
   var status = document.getElementById('status');
   var statusText = document.getElementById('status-text');
   status.style.display = 'block';
@@ -275,7 +277,7 @@ async function scanShelf(imageBase64) {
     var resp = await fetch(SERVER + '/scan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageBase64: imageBase64, category: category })
+      body: JSON.stringify({ imageBase64: imageBase64, category: category, mediaType: mediaType })
     });
     var data = await resp.json();
     if (data.error) throw new Error(data.error);
