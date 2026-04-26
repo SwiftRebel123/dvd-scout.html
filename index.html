@@ -346,7 +346,8 @@ function renderResults() {
 }
 
 function makeRow(item, info, idx) {
-  var title = item.title || item;
+  var title = (item.title || item || '');
+  if (typeof title !== 'string') title = '';
   var studio = item.studio || '';
   var author = item.author || '';
   var salePrice = getSalePrice(title);
