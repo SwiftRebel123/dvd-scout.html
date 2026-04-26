@@ -236,9 +236,14 @@ function updateScanCount() {
 }
 
 function isDuplicate(title) {
+  if (!title || typeof title !== 'string') return false;
   var t = title.toLowerCase().trim();
+  if (!t) return false;
   var all = accumulatedTitles.items || [];
-  return all.filter(function(item) { return (item.title || item).toLowerCase().trim() === t; }).length > 1;
+  return all.filter(function(item) {
+    var tt = item.title || '';
+    return typeof tt === 'string' && tt.toLowerCase().trim() === t;
+  }).length > 1;
 }
 
 function handleFile(file) {
