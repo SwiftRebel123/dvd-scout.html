@@ -217,8 +217,9 @@ async function loadSales() {
 }
 
 function getSalePrice(title) {
+  if (!title || typeof title !== 'string' || !title.trim()) return null;
   var t = title.toLowerCase().trim();
-  var match = salesHistory.find(function(s) { return s.title.toLowerCase().trim() === t; });
+  var match = salesHistory.find(function(s) { return s.title && s.title.toLowerCase().trim() === t; });
   return match ? match.price : null;
 }
 
